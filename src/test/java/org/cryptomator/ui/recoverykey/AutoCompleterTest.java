@@ -28,6 +28,14 @@ public class AutoCompleterTest {
 		Assertions.assertFalse(result.isPresent());
 	}
 
+	@Test
+	@DisplayName("no match for 'nonexistent'")
+	public void testNoMatchForNonexistent() {
+		AutoCompleter autoCompleter = new AutoCompleter(Set.of("tame", "teach", "teacher"));
+		Optional<String> result = autoCompleter.autocomplete("nonexistent");
+		Assertions.assertFalse(result.isPresent());
+	}
+
 	@Nested
 	@DisplayName("search in dict: ['tame', 'teach', 'teacher']")
 	public class NarrowedDownDict {

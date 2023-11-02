@@ -6,12 +6,33 @@
 package org.cryptomator.common.settings;
 
 import org.cryptomator.common.Environment;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 public class SettingsTest {
+
+	@Test
+	@DisplayName("Test Migrate Legacy Settings for Dokany")
+	public void testMigrateLegacySettings() throws Exception {
+		Settings settings;
+		// Get the private method using reflection
+		SettingsJson settingsJson = new SettingsJson();
+		settings = new Settings(settingsJson);
+
+		Method migrateLegacySettingsMethod = Settings.class.getDeclaredMethod("migrateLegacySettings", SettingsJson.class);
+		migrateLegacySettingsMethod.setAccessible(true);
+
+		// Test migration for Dokany
+		SettingsJson legacySettingsDokany = new SettingsJson();
+		legacySettingsDokany.preferredVolumeImpl = "Dokany";
+		migrateLegacySettingsMethod.invoke(settings, legacySettingsDokany);
+		Assertions.assertEquals("org.cryptomator.frontend.dokany.mount.DokanyMountProvider", settings.mountService.get());
+	}
 
 	@Test
 	public void testAutoSave() {
